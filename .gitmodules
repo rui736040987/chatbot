@@ -1,0 +1,6 @@
+[submodule "deerflow"]
+	path = deerflow
+	url = https://github.com/bytedance/deer-flow.git
+[submodule "weknora/WeKnora"]
+	path = weknora/WeKnora
+	url = https://github.com/Tencent/WeKnora.git

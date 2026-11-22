@@ -1,0 +1,59 @@
+name: chatbot-weknora
+services:
+  app:
+    image: wechatopenai/weknora-app:latest@sha256:25b20959b7456f7842ef55ed4feff3694dbd0c6f8af4117c1fb3c5dec6bdf14d
+    restart: unless-stopped
+    env_file: .local/weknora.env
+    ports:
+      - '127.0.0.1:18081:8080'
+    volumes:
+      - app-data:/data/files
+      - ./WeKnora/config/config.yaml:/app/config/config.yaml:ro
+      - docreader-tmp:/tmp/docreader:ro
+    depends_on:
+      docreader:
+        condition: service_healthy
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:8080/health']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  docreader:
+    image: wechatopenai/weknora-docreader:latest@sha256:8c71ec3cc2e291829c3938d2c7dc5f921c1d10551c8774bf844c83bc4aa3cb84
+    restart: unless-stopped
+    expose:
+      - '50051'
+    environment:
+      TZ: Asia/Shanghai
+      LOG_LEVEL: INFO
+      DOCREADER_IMAGE_OUTPUT_DIR: /tmp/docreader
+      DOCREADER_GRPC_MAX_WORKERS: '2'
+      DOCREADER_GRPC_MAX_FILE_SIZE_MB: '50'
+      DOCREADER_PDF_EXTRACT_EMBEDDED_IMAGES: 'true'
+      DOCREADER_PDF_RENDER_VECTOR_FIGURES: 'true'
+      DOCREADER_PDF_RENDER_PARALLELISM: '2'
+    volumes:
+      - docreader-tmp:/tmp/docreader
+    healthcheck:
+      test: ['CMD', 'grpc_health_probe', '-addr=localhost:50051']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+  frontend:
+    image: wechatopenai/weknora-ui:latest@sha256:df26705d866997db07f3da78dabedc4f594b383566a3996810c166a5c6bee393
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:18088:80'
+    environment:
+      APP_HOST: app
+      APP_PORT: '8080'
+      DEFAULT_LOCALE: zh-CN
+    depends_on:
+      app:
+        condition: service_healthy
+volumes:
+  app-data:
+  docreader-tmp:

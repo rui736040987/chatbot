@@ -1,0 +1,98 @@
+[
+  {
+    "part": "AMS1117-3.3",
+    "product_url": "https://item.szlcsc.com/6652.html",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20180727/C6186_7A095716F0823C02F1997A905E26C086.pdf",
+    "title": "AMS1117-3.3中文资料_最新报价_数据手册下载_Advanced Monolithic Systems-线性稳压器(LDO)-立创商城",
+    "file": "datasheets/AMS1117-3.3.pdf",
+    "bytes": 95151,
+    "sha256": "189a2651878a87d590b768eaa9b44217a3fdf460352ce6ecaff127221282a3f0",
+    "text_chars": 17153,
+    "pages": 8
+  },
+  {
+    "part": "CH340C",
+    "product_url": "https://item.szlcsc.com/85852.html",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20250604/33626338A5406B1E2A8163A86C0531AF.pdf",
+    "title": "CH340C中文资料_最新报价_数据手册下载_WCH(南京沁恒)-USB转换芯片-立创商城",
+    "file": "datasheets/CH340C.pdf",
+    "bytes": 233534,
+    "sha256": "6a6922d3c4de2d4fc9b7fb2c938985d2bbd73cd381813f10e940b492baebb7c0",
+    "text_chars": 13109,
+    "pages": 10
+  },
+  {
+    "part": "TP4056",
+    "product_url": "https://item.szlcsc.com/354934.html?fromZone=s_s__%2522TP4056%2522",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20190327/C382139_EC85960E6FE3E26856C240C81751A184.pdf",
+    "title": "TP4056中文资料_最新报价_数据手册下载_TPOWER(天源)-电池管理-立创商城",
+    "file": "datasheets/TP4056.pdf",
+    "bytes": 438681,
+    "sha256": "21da38db9ab8233cf6485296f4bc4b18cc1041934a4cd65079e3e7e63bdb8e19",
+    "text_chars": 5319,
+    "pages": 7
+  },
+  {
+    "part": "FT232RL-REEL",
+    "product_url": "https://item.szlcsc.com/9194.html",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20130221/1457706592200.pdf",
+    "title": "FT232RL-REEL中文资料_最新报价_数据手册下载_FTDI(飞特帝亚)-USB转换芯片-立创商城",
+    "file": "datasheets/FT232RL-REEL.pdf",
+    "bytes": 814843,
+    "sha256": "c1413845bb43d904db49a0fcdfa62537ac784dccfbff2590cac808d3102cd067",
+    "text_chars": 66649,
+    "pages": 29
+  },
+  {
+    "part": "W25Q32JVSSIQ",
+    "product_url": "https://item.szlcsc.com/83501.html",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20160910/1473490310454.pdf",
+    "title": "W25Q32JVSSIQ中文资料_最新报价_数据手册下载_Winbond(华邦)-NOR FLASH-立创商城",
+    "file": "datasheets/W25Q32JVSSIQ.pdf",
+    "bytes": 2810753,
+    "sha256": "ef7c7bf6fd77c2a3182355473e94407d2a5b34531ace5591c2989cd3e4d5b2df",
+    "text_chars": 120949,
+    "pages": 76
+  },
+  {
+    "part": "NE555DR-UMW",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20260522/236956A07755F8151135B7B7E00EFC55.pdf",
+    "file": "datasheets/NE555DR-UMW.pdf",
+    "bytes": 346764,
+    "sha256": "29b2fc3e0cffd4c5d4983a1ad3695ff48c62960cd87b94f3fd743f7dc0d06ebd",
+    "text_chars": 23093,
+    "pages": 24
+  },
+  {
+    "part": "SN74HC595DR",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20140616/1457707092894.pdf",
+    "file": "datasheets/SN74HC595DR.pdf",
+    "bytes": 1259211,
+    "sha256": "49783c372a7a93e4a82c236db0776f66d68a3404b048bf59de82fac0d03e1c35",
+    "text_chars": 28374,
+    "pages": 27
+  },
+  {
+    "part": "LM358-MSK",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20240508/1E15FCB8A7A50BBB27A99E3864C37324.pdf",
+    "file": "datasheets/LM358-MSK.pdf",
+    "bytes": 1439387,
+    "sha256": "f6069b2f55a7e94b0b855857eb2e4a79d4551731912f5fdf25af0bd84bfe043b"
+  },
+  {
+    "part": "LM393-ST",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20191028/C442406_2C5DCA1E3A9D602E347721638CA2979E.pdf",
+    "file": "datasheets/LM393-ST.pdf",
+    "bytes": 678162,
+    "sha256": "27b87ef9e8dfed530bc847101a8e374c5509a6ee9c168e9b969273f51a392d53"
+  },
+  {
+    "part": "ESP32-C3",
+    "pdf_url": "https://atta.szlcsc.com/upload/public/pdf/source/20241028/4EC5E050123CF38F5BB396A378828F04.pdf",
+    "file": "datasheets/ESP32-C3.pdf",
+    "bytes": 910863,
+    "sha256": "04f59f1ce9f952fdb805df57d4168a58bd82029566726fd20cfaf5f9ca147b1c",
+    "text_chars": 97157,
+    "pages": 69
+  }
+]

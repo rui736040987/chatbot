@@ -1,0 +1,126 @@
+name: chatbot-deerflow
+services:
+  redis:
+    image: redis:7
+    command:
+    - redis-server
+    - --appendonly
+    - 'yes'
+    restart: unless-stopped
+    volumes:
+    - redis-data:/data
+    healthcheck:
+      test:
+      - CMD
+      - redis-cli
+      - ping
+      interval: 5s
+      timeout: 3s
+      retries: 12
+  gateway:
+    image: ghcr.io/bytedance/deer-flow-backend@sha256:a23b1a9da4aec585a8ad007bf6d15691ae57aca0d34d74393bc26513866f26fa
+    init: true
+    restart: unless-stopped
+    working_dir: /app/backend
+    command:
+    - /app/backend/.venv/bin/python
+    - -m
+    - uvicorn
+    - app.gateway.app:app
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8001'
+    - --workers
+    - '1'
+    - --timeout-graceful-shutdown
+    - '10'
+    stop_grace_period: 90s
+    env_file: ../.local/deerflow-runtime/runtime.env
+    environment:
+      PYTHONPATH: /opt/local-extensions:/opt/weknora-extension:/app/backend
+      DEER_FLOW_PROJECT_ROOT: /app
+      DEER_FLOW_HOME: /app/backend/.deer-flow
+      DEER_FLOW_CONFIG_PATH: /app/backend/config.yaml
+      DEER_FLOW_EXTENSIONS_CONFIG_PATH: /app/backend/extensions_config.json
+      DEER_FLOW_STREAM_BRIDGE_REDIS_URL: redis://redis:6379/0
+      AUTH_TRUSTED_PROXIES: nginx
+      TZ: Asia/Shanghai
+    volumes:
+    - ./config.yaml:/app/backend/config.yaml:ro
+    - ../.local/deerflow-runtime/extensions_config.json:/app/backend/extensions_config.json
+    - ../.local/deerflow-runtime/data:/app/backend/.deer-flow
+    - ../deerflow/skills:/app/skills:ro
+    - ../deerflow/examples/deerflow-extension-weknora:/opt/weknora-extension:ro
+    - ./extensions:/opt/local-extensions:ro
+    - ../.local/deerflow-runtime/pdf-catalog:/opt/pdf-catalog:ro
+    networks:
+    - default
+    - weknora
+    healthcheck:
+      test:
+      - CMD
+      - /app/backend/.venv/bin/python
+      - -c
+      - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health/ready',
+        timeout=5)
+      interval: 5s
+      timeout: 6s
+      retries: 30
+      start_period: 30s
+    depends_on:
+      redis:
+        condition: service_healthy
+  frontend:
+    image: ghcr.io/bytedance/deer-flow-frontend@sha256:88b8e06665db365c4dc4117c2b68eaef5de3bf2f9b47a669212cf57baf242ce9
+    restart: unless-stopped
+    env_file: ../.local/deerflow-runtime/frontend.env
+    environment:
+      DEER_FLOW_INTERNAL_GATEWAY_BASE_URL: http://gateway:8001
+      NEXT_TELEMETRY_DISABLED: '1'
+    depends_on:
+      gateway:
+        condition: service_healthy
+    healthcheck:
+      test:
+      - CMD
+      - node
+      - -e
+      - fetch('http://127.0.0.1:3000').then(r=>process.exit(r.status<500?0:1)).catch(()=>process.exit(1))
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+  nginx:
+    image: nginx:1.31.2-alpine@sha256:54f2a904c251d5a34adf545a72d32515a15e08418dae0266e23be2e18c66fefa
+    restart: unless-stopped
+    ports:
+    - 127.0.0.1:2026:2026
+    volumes:
+    - ../deerflow/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    command:
+    - nginx
+    - -g
+    - daemon off;
+    depends_on:
+      gateway:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    healthcheck:
+      test:
+      - CMD
+      - wget
+      - -q
+      - -O
+      - /dev/null
+      - http://127.0.0.1:2026/api/v1/auth/setup-status
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  redis-data: null
+networks:
+  weknora:
+    external: true
+    name: chatbot-weknora_default

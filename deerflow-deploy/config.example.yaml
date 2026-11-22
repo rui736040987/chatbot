@@ -1,0 +1,363 @@
+config_version: 64
+log_level: info
+logging:
+  enhance:
+    enabled: false
+    format: text
+token_usage:
+  enabled: true
+token_budget:
+  enabled: false
+  max_tokens: 200000
+  max_input_tokens: null
+  max_output_tokens: null
+  warn_threshold: 0.8
+  hard_stop_threshold: 1.0
+recursion_limit: 100
+max_recursion_limit: 1000
+models:
+- name: opencode-go-vision
+  display_name: OpenCode Go · DeepSeek V4.1 Flash
+  use: langchain_openai:ChatOpenAI
+  model: deepseek-v4.1-flash
+  base_url: https://opencode.ai/zen/go/v1
+  api_key: $OPENCODE_GO_API_KEY
+  default_headers:
+    User-Agent: DeerFlow/2.3.0
+    x-opencode-session: deerflow-local-wsl
+  max_tokens: 8192
+  timeout: 180
+  max_retries: 1
+  context_window: 1000000
+  supports_vision: true
+  supports_thinking: false
+  extra_body:
+    thinking:
+      type: disabled
+- name: opencode-go-reasoning
+  display_name: OpenCode Go · DeepSeek V4.1 Flash 推理
+  use: deerflow.models.patched_deepseek:PatchedChatDeepSeek
+  model: deepseek-v4.1-flash
+  api_key: $OPENCODE_GO_API_KEY
+  default_headers:
+    User-Agent: DeerFlow/2.3.0
+    x-opencode-session: deerflow-local-wsl
+  max_tokens: 16384
+  timeout: 180
+  max_retries: 1
+  context_window: 1000000
+  supports_vision: true
+  supports_thinking: true
+  api_base: https://opencode.ai/zen/go/v1
+  supports_reasoning_effort: true
+  reasoning_effort: low
+  when_thinking_enabled:
+    extra_body:
+      thinking:
+        type: enabled
+  when_thinking_disabled:
+    extra_body:
+      thinking:
+        type: disabled
+  reasoning:
+    thinking: optional
+    dialect: openai_extra_body
+    history: preserve
+    effort:
+      values:
+      - low
+      - high
+      - max
+      default: low
+      aliases:
+        minimal: low
+        medium: low
+knowledge_base:
+  enabled: true
+  scope_selection_enabled: true
+tool_groups:
+- name: web
+- name: file:read
+- name: file:write
+- name: bash
+- name: browser
+- name: knowledge
+tools:
+- name: read_file
+  group: file:read
+  use: deerflow.sandbox.tools:read_file_tool
+- name: glob
+  group: file:read
+  use: deerflow.sandbox.tools:glob_tool
+  max_results: 200
+- name: grep
+  group: file:read
+  use: deerflow.sandbox.tools:grep_tool
+  max_results: 100
+- name: write_file
+  group: file:write
+  use: deerflow.sandbox.tools:write_file_tool
+- name: str_replace
+  group: file:write
+  use: deerflow.sandbox.tools:str_replace_tool
+- name: knowledge_search
+  group: knowledge
+  use: deerflow.knowledge.tools:knowledge_search_tool
+  provider: weknora
+- name: knowledge_entries_search
+  group: knowledge
+  use: deerflow.knowledge.tools:knowledge_entries_search_tool
+  provider: weknora
+tool_search:
+  enabled: false
+  auto_promote_top_k: 3
+tool_output:
+  enabled: true
+  externalize_min_chars: 12000
+  preview_head_chars: 2000
+  preview_tail_chars: 1000
+  fallback_max_chars: 30000
+  fallback_head_chars: 8000
+  fallback_tail_chars: 3000
+  storage_subdir: .tool-results
+  exempt_tools:
+  - read_file
+  - read_file_tool
+  elide_superseded_writes: false
+  superseded_write_min_chars: 2000
+  keep_recent_writes: 1
+tool_artifacts:
+  enabled: true
+  max_entries: 100
+  detect_refs_in_text: true
+  inject_model_context: true
+  resolve_handles_in_args: true
+suggestions:
+  enabled: true
+  max_suggestions: 3
+input_polish:
+  enabled: true
+  max_chars: 4000
+  model_name: null
+loop_detection:
+  enabled: true
+  warn_threshold: 3
+  hard_limit: 5
+  window_size: 20
+  max_tracked_threads: 100
+  tool_freq_warn: 30
+  tool_freq_hard_limit: 50
+pii_redaction:
+  enabled: false
+read_before_write:
+  enabled: true
+  elide_blocked_payloads: true
+  elide_min_chars: 2000
+projects:
+  instructions_max_bytes: 8192
+  shelf_index_max_entries: 50
+  shelf_index_max_bytes: 4096
+  trash_retention_days: 30
+  summaries_enabled: false
+  summary_max_bytes: 256
+  summary_concurrency: 2
+  summary_queue_size: 32
+  summary_timeout_seconds: 60
+  search_max_chars_per_document: 1000000
+  search_max_total_chars: 8000000
+safety_finish_reason:
+  enabled: true
+uploads:
+  max_files: 10
+  max_file_size: 52428800
+  max_total_size: 104857600
+  auto_convert_documents: false
+  pdf_converter: auto
+sandbox:
+  use: deerflow.sandbox.local:LocalSandboxProvider
+  allow_host_bash: false
+subagent_runtime:
+  max_running: 3
+  max_queued: 64
+  admission_policy: queue
+  queue_timeout_seconds: 300
+subagent_batches:
+  enabled: false
+  poll_interval_seconds: 1
+  lease_seconds: 120
+  max_items_per_batch: 5000
+  default_max_live_items: 100
+  max_live_items_per_batch: 1000
+  default_max_running_items: 3
+  max_running_items_per_batch: 64
+  max_attempts: 3
+  max_result_chars: 100000
+  result_preview_max_chars: 2000
+verification:
+  receipts_enabled: true
+  receipts_render_mode: delegation_only
+  judge_enabled: false
+  judge_model_name: null
+skills:
+  container_path: /mnt/skills
+skill_scan:
+  enabled: true
+title:
+  enabled: true
+  max_words: 6
+  max_chars: 60
+  model_name: null
+task_continuity:
+  enabled: false
+  max_batches: 32
+  max_records_per_batch: 256
+  max_record_chars: 16000
+summarization:
+  enabled: true
+  model_name: null
+  trigger:
+  - type: tokens
+    value: 32000
+  keep:
+    type: messages
+    value: 10
+  trim_tokens_to_summarize: 15564
+  summary_prompt: null
+  skill_file_read_tool_names:
+  - read_file
+  - read
+  - view
+  - cat
+memory:
+  enabled: false
+  injection_enabled: true
+  shutdown_flush_timeout_seconds: 30.0
+  manager_class: deermem
+  mode: middleware
+  backend_config:
+    storage_path: ''
+    storage_class: file
+    strict_user_scope: false
+    manifest_filename: memory.json
+    file_lock_timeout_seconds: 10
+    retrieval_adapter: fts5
+    retrieval_index_path: ''
+    debounce_seconds: 30
+    max_wait_seconds: 300
+    queue_max_depth: 1000
+    model: null
+    max_facts: 100
+    fact_confidence_threshold: 0.7
+    fact_eviction_policy: confidence
+    fact_eviction_shadow_enabled: false
+    eviction_confidence_weight: 0.65
+    eviction_confirmation_weight: 0.25
+    eviction_access_weight: 0.1
+    eviction_confirmation_half_life_days: 90
+    eviction_access_half_life_days: 30
+    eviction_correction_reserved_fraction: 0.1
+    eviction_correction_reserved_max: 10
+    eviction_audit_max_entries: 200
+    max_injection_tokens: 2000
+    token_counting: tiktoken
+    guaranteed_categories:
+    - correction
+    guaranteed_token_budget: 500
+    staleness_review_enabled: true
+    staleness_age_days: 90
+    staleness_min_candidates: 3
+    staleness_max_removals_per_cycle: 10
+    staleness_protected_categories:
+    - correction
+    staleness_max_lifetime_multiplier: 20.0
+    staleness_max_extension_days: 3650
+    consolidation_enabled: false
+    consolidation_min_facts: 8
+    consolidation_max_groups_per_cycle: 3
+    consolidation_max_sources: 8
+blob_storage:
+  enabled: false
+  backend: local_fs
+  backend_config: {}
+agents_api:
+  enabled: true
+skill_evolution:
+  enabled: false
+  moderation_model_name: null
+  security_fail_closed: true
+database:
+  backend: sqlite
+  sqlite_dir: .deer-flow/data
+  pool_recycle: 300
+  command_timeout: 30
+  checkpoint_channel_mode: full
+  checkpoint_delta:
+    snapshot_frequency: 10
+  checkpoint_graph_cache:
+    accessor_graph_max: 64
+run_events:
+  backend: memory
+  max_trace_content: 10240
+  track_token_usage: true
+agent_storage:
+  backend: file
+scheduler:
+  enabled: false
+  tool_enabled: false
+  multi_instance: false
+  poll_interval_seconds: 5
+  lease_seconds: 120
+  max_concurrent_runs: 3
+  max_concurrent_runs_per_user: 2
+  queue_timeout_seconds: 3600
+  min_once_delay_seconds: 60
+  recursion_limit: 1000
+mcp_tasks:
+  enabled: false
+  poll_interval_seconds: 5
+  lease_seconds: 120
+  max_concurrent_polls: 8
+  max_poll_backoff_seconds: 300
+  input_required_poll_interval_seconds: 60
+  tracking_degraded_after_errors: 3
+  max_result_bytes: 65536
+  result_preview_max_chars: 2000
+deployment:
+  multi_instance: false
+run_ownership:
+  lease_seconds: 30
+  grace_seconds: 10
+  heartbeat_enabled: false
+authorization:
+  enabled: false
+plugins:
+- use: pdf_citations:install
+  enabled: true
+  required: true
+  config:
+    timeout: 30
+    match_count: 12
+    spaces:
+    - base_url: http://chatbot-weknora-app-1:8080
+      tenant_id: '1'
+      api_key_env: WEKNORA_API_KEY
+      user_ids:
+      - CONFIGURE_DEERFLOW_USER_ID
+      knowledge_base_ids:
+      - CONFIGURE_WEKNORA_KB_ID
+lead_prompt_overlay:
+  append: '使用中文回答芯片手册问题。先确定用户指定的型号、版本和章节，再从知识库取证。knowledge_search适合初步召回；遇到缺失、跨页或跨章节证据，应使用WeKnora只读MCP的list_documents、read_document进行连续分块阅读，不能只根据一次召回就判定资料不存在。MCP使用原生WeKnora
+    ID，勿把wk1_目录ID作为原生ID。可以分次读取目标章节，证据覆盖后再作答。上传了电路图或时序图时先调用view_image查看实际图像，不能仅凭文件名或文字描述推断。核对器件后缀、单位、引脚号、连线和时钟编号，图面折行不等于新事务。区分事实、推断和未确认项，附实际证据来源；不要编造页码、链接或引用。仅回答所问内容。
+    对英文手册使用原文的英文标识符进行read_document关键词查询；query中的多个词要求同时出现，优先逐个关键词定位，再顺序分页补读。 如果用户明确只依据上传图片，view_image成功后直接基于图面回答，不要检索知识库、读取整本文档或补充背景资料。图中看不清则明确指出；其余文字问题仍按知识库取证流程处理。
+    MCP正文分块可能跨页，相邻块的页眉页脚不能作为当前内容的确切页码。没有结构化页定位时只给文档名和原始chunk_id，不推算页码，不构造未映射的聊天锚点或PDF链接。
+    knowledge_search返回的来源如果带page/url，它们是原始PDF物理页定位。最终引用必须原样使用该工具给出的#knowledge-source-引用句柄，不能将MCP
+    chunk_id写为链接。MCP连续阅读补证后，再调用knowledge_search用关键原文召回相应页面，取得可跳转来源卡片；若未取得则明确该条仅有文本证据。
+    MCP取得原文后，如普通向量检索不能返回相同证据，knowledge_search还支持原文定位格式：pdf-evidence {"document_id":"原生文档UUID","quote":"从MCP结果复制的连续原文，至少40个字母或数字，建议80至200字符"}。quote必须属于同一个原始PDF页面，不能包括chunk_id等元数据，也不能编造或改写。这会核对原始PDF正文并返回标准引用句柄和物理页；未匹配则不返回来源。每个章节分别调用并引用。
+
+    对芯片手册的概览、比较或跨章节问题，必须联合使用 knowledge_entries_search 和 knowledge_search：先用简短型号或主题搜索
+    Wiki，再检索原文验证。Wiki 搜索返回原生知识库ID、slug、来源文档ID及证据分页命令。使用 knowledge_entries_search 的
+    wiki-page JSON 命令读取完整Wiki正文及其直接关联的原文chunk证据；offset/limit用于继续读取证据，不能把首批证据当全部。优先引用该工具返回的原PDF页级证据卡片，并另附Wiki来源卡片说明组织依据。数值结论必须原文复核，Wiki无结果或知识库没有Wiki时明确说明并继续原文取证。MCP
+    wiki_read_page可以补读，但需要可点击引用时使用 knowledge_entries_search。用户只选了具体文档时Wiki工具不支持该范围，使用原文工具，不扩大检索范围。
+    knowledge_entries_search 返回的原PDF证据也使用完全有效的标准引用句柄，与 knowledge_search 来源卡片等价。已获得
+    native exact source locator 且 source hash verified 的证据时，直接引用，无需再调用 pdf-evidence
+    或重复检索来生成同一引用。每个问题在Wiki定位与原文复核覆盖所问事项后立即回答；不要反复检索已有证据。'
